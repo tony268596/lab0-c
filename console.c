@@ -72,6 +72,11 @@ static void pop_file();
 
 static bool interpret_cmda(int argc, char *argv[]);
 
+bool do_hello(int argc, char *argv[])
+{
+    return (bool) printf("Hello, world\n");
+}
+
 /* Add a new command */
 void add_cmd(char *name, cmd_func_t operation, char *summary, char *param)
 {
@@ -426,6 +431,7 @@ void init_cmd()
                 "Display or set options. See 'Options' section for details",
                 "[name val]");
     ADD_COMMAND(quit, "Exit program", "");
+    ADD_COMMAND(hello, "Print hello mesage", "");
     ADD_COMMAND(source, "Read commands from source file", "");
     ADD_COMMAND(log, "Copy output to file", "file");
     ADD_COMMAND(time, "Time command execution", "cmd arg ...");

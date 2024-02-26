@@ -29,10 +29,13 @@ void q_free(struct list_head *l)
         return;
 
     element_t *tmp, *safe;
-    list_for_each_entry_safe (tmp, safe, l, list)
-        q_release_element(tmp);
+    list_for_each_entry_safe (tmp, safe, l, list) {
+        free(tmp->value);
+        free(tmp);
+    }
 
     free(l);
+    return;
 }
 
 /* Insert an element at head of queue */
@@ -45,7 +48,8 @@ bool q_insert_head(struct list_head *head, char *s)
     if (!tmp)
         return false;
 
-    tmp->value = strndup(s, strlen(s));
+    INIT_LIST_HEAD(&tmp->list);
+    tmp->value = strdup(s);
     if (!tmp->value) {
         free(tmp);
         return false;
@@ -65,7 +69,8 @@ bool q_insert_tail(struct list_head *head, char *s)
     if (!tmp)
         return false;
 
-    tmp->value = strndup(s, strlen(s));
+    INIT_LIST_HEAD(&tmp->list);
+    tmp->value = strdup(s);
     if (!tmp->value) {
         free(tmp);
         return false;
@@ -78,7 +83,7 @@ bool q_insert_tail(struct list_head *head, char *s)
 /* Remove an element from head of queue */
 element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (!head)
+    if (!head || list_empty(head))
         return NULL;
 
     element_t *tmp = list_first_entry(head, element_t, list);
@@ -94,7 +99,7 @@ element_t *q_remove_head(struct list_head *head, char *sp, size_t bufsize)
 /* Remove an element from tail of queue */
 element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
 {
-    if (!head)
+    if (!head || list_empty(head))
         return NULL;
 
     element_t *tmp = list_last_entry(head, element_t, list);
@@ -104,7 +109,6 @@ element_t *q_remove_tail(struct list_head *head, char *sp, size_t bufsize)
         strncpy(sp, tmp->value, bufsize - 1);
         sp[bufsize - 1] = '\0';
     }
-
     return tmp;
 }
 
@@ -124,7 +128,7 @@ int q_size(struct list_head *head)
 /* Delete the middle node in queue */
 bool q_delete_mid(struct list_head *head)
 {
-    // https://leetcode.com/problems/delete-the-middle-node-of-a-linked-list/
+
     return true;
 }
 

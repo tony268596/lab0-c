@@ -194,10 +194,46 @@ void q_reverseK(struct list_head *head, int k)
     // https://leetcode.com/problems/reverse-nodes-in-k-group/
     if (!head || list_empty(head) || list_is_singular(head))
         return;
+
+    // struct list_head *tail, *tmp = head;
+    // int i;
+
+    // for (i = k, tail = tmp; i > 0 && tail != head; i--)
+    //     tail = tail->next;
 }
 
 /* Sort elements of queue in ascending/descending order */
-void q_sort(struct list_head *head, bool descend) {}
+void q_sort(struct list_head *head, bool descend)
+{
+    if (!head || list_empty(head) || list_is_singular(head))
+        return;
+
+    bool swapped = true;
+    do {
+        swapped = false;
+        struct list_head *current;
+        for (current = head->next; current->next != head;
+             current = current->next) {
+            struct list_head *next = current->next;
+            element_t *currElem = list_entry(current, element_t, list);
+            element_t *nextElem = list_entry(next, element_t, list);
+
+            if (strcmp(currElem->value, nextElem->value) < 0) {
+                // char *temp = currElem->value;
+                // currElem->value = nextElem->value;
+                // nextElem->value = temp;
+                currElem->list.prev->next = next;
+                currElem->list.next = nextElem->list.next;
+                nextElem->list.prev = currElem->list.prev;
+                currElem->list.prev = next;
+                nextElem->list.next->prev = current;
+                nextElem->list.next = current;
+
+                swapped = true;
+            }
+        }
+    } while (swapped);
+}
 
 /* Remove every node which has a node with a strictly less value anywhere to
  * the right side of it */

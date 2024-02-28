@@ -30,8 +30,7 @@ void q_free(struct list_head *l)
 
     element_t *tmp, *safe;
     list_for_each_entry_safe (tmp, safe, l, list) {
-        free(tmp->value);
-        free(tmp);
+        q_release_element(tmp);
     }
 
     free(l);
@@ -139,8 +138,7 @@ bool q_delete_mid(struct list_head *head)
 
     element_t *tmp = list_entry(*ind, element_t, list);
     list_del(*ind);
-    free(tmp->value);
-    free(tmp);
+    q_release_element(tmp);
 
     return true;
 }
@@ -149,13 +147,29 @@ bool q_delete_mid(struct list_head *head)
 bool q_delete_dup(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
-    return true;
+    return false;
 }
 
 /* Swap every two adjacent nodes */
 void q_swap(struct list_head *head)
 {
     // https://leetcode.com/problems/swap-nodes-in-pairs/
+    if (!head || list_empty(head))
+        return;
+
+    struct list_head *one, *two;
+    for (one = head->next, two = one->next; one != head && two != head;
+         one = two, two = two->next) {
+        one->prev->next = two;
+        two->prev = one->prev;
+        one->next = two->next;
+        one->prev = two;
+        two->next->prev = one;
+        two->next = one;
+
+        two = one->next;
+    }
+    return;
 }
 
 /* Reverse elements in queue */

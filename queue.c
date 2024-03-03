@@ -198,11 +198,20 @@ void q_reverseK(struct list_head *head, int k)
     if (!head || list_empty(head) || list_is_singular(head))
         return;
 
-    // struct list_head *tail, *tmp = head;
-    // int i;
-
-    // for (i = k, tail = tmp; i > 0 && tail != head; i--)
-    //     tail = tail->next;
+    int count = k;
+    struct list_head *tmp, *cut, *safe;
+    cut = head;
+    list_for_each_safe (tmp, safe, head) {
+        if (--count)
+            continue;
+        LIST_HEAD(current);
+        count = k;
+        list_cut_position(&current, cut, tmp);
+        q_reverse(&current);
+        list_splice(&current, cut);
+        cut = safe->prev;
+    }
+    return;
 }
 
 typedef int

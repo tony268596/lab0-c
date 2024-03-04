@@ -153,27 +153,48 @@ bool q_delete_mid(struct list_head *head)
     return true;
 }
 
-/* Delete all nodes that have duplicate string */
 bool q_delete_dup(struct list_head *head)
 {
-    // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
-    if (!head || list_empty(head))
+    if (!head)
         return false;
-
-    struct list_head **tmp = &head->next;
-    struct list_head *jump = (*tmp)->next;
-    while (*tmp != head) {
-        if (cmp(*tmp, jump) == 0) {
-            while (cmp(*tmp, jump) == 0) {
-                jump = jump->next;
-            }
-            *tmp = jump;
+    struct list_head *tmp, *safe;
+    bool dup = false;
+    list_for_each_safe (tmp, safe, head) {
+        if (safe != head && !cmp(tmp, safe)) {
+            element_t *ptr = list_entry(tmp, element_t, list);
+            list_del(tmp);
+            q_release_element(ptr);
+            dup = true;
+        } else if (dup) {
+            element_t *ptr = list_entry(tmp, element_t, list);
+            list_del(tmp);
+            q_release_element(ptr);
+            dup = false;
         }
-        tmp = &(*tmp)->next;
-        jump = (*tmp)->next;
     }
     return true;
 }
+/* Delete all nodes that have duplicate string */
+// bool q_delete_dup(struct list_head *head)
+// {
+//     // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
+//     if (!head)
+//         return false;
+//     element_t *entry, *safe;
+//     bool dup = false;
+//     list_for_each_entry_safe (entry, safe, head, list) {
+//         if (&safe->list != head && !strcmp(entry->value, safe->value)) {
+//             list_del(&entry->list);
+//             q_release_element(entry);
+//             dup = true;
+//         } else if (dup) {
+//             list_del(&entry->list);
+//             q_release_element(entry);
+//             dup = false;
+//         }
+//     }
+//     return true;
+// }
 
 /* Swap every two adjacent nodes */
 void q_swap(struct list_head *head)

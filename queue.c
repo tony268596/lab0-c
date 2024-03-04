@@ -374,24 +374,22 @@ int q_ascend(struct list_head *head)
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     if (!head || list_empty(head))
         return 0;
+    if (list_is_singular(head))
+        return 1;
 
-    struct list_head *first = head->next;
-    struct list_head *second = head->next->next;
-
-    while (first != head) {
-        while (second != head) {
-            element_t *one = list_entry(first, element_t, list);
-            element_t *two = list_entry(second, element_t, list);
-            if (strcmp(one->value, two->value) > 0) {
-                list_del(second);
-                second = first->next;
-            } else {
-                second = second->next;
-            }
+    q_reverse(head);
+    struct list_head *tmp = head->next;
+    while (tmp->next != head) {
+        if (cmp(tmp, tmp->next) < 0) {
+            element_t *ptr = list_entry(tmp->next, element_t, list);
+            list_del(tmp->next);
+            q_release_element(ptr);
+        } else {
+            tmp = tmp->next;
         }
-        first = first->next;
-        second = first->next;
     }
+    q_reverse(head);
+
     return q_size(head);
 }
 
@@ -402,24 +400,22 @@ int q_descend(struct list_head *head)
     // https://leetcode.com/problems/remove-nodes-from-linked-list/
     if (!head || list_empty(head))
         return 0;
+    if (list_is_singular(head))
+        return 1;
 
-    struct list_head *first = head->next;
-    struct list_head *second = head->next->next;
-
-    while (first != head) {
-        while (second != head) {
-            element_t *one = list_entry(first, element_t, list);
-            element_t *two = list_entry(second, element_t, list);
-            if (strcmp(one->value, two->value) < 0) {
-                list_del(second);
-                second = first->next;
-            } else {
-                second = second->next;
-            }
+    q_reverse(head);
+    struct list_head *tmp = head->next;
+    while (tmp->next != head) {
+        if (cmp(tmp, tmp->next) > 0) {
+            element_t *ptr = list_entry(tmp->next, element_t, list);
+            list_del(tmp->next);
+            q_release_element(ptr);
+        } else {
+            tmp = tmp->next;
         }
-        first = first->next;
-        second = first->next;
     }
+    q_reverse(head);
+
     return q_size(head);
 }
 

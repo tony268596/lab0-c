@@ -7,6 +7,13 @@
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 
+int cmp(const struct list_head *a, const struct list_head *b)
+{
+    element_t *a_ele = container_of(a, element_t, list);
+    element_t *b_ele = container_of(b, element_t, list);
+    return (strcmp(a_ele->value, b_ele->value));
+}
+
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
  * but some of them cannot occur. You can suppress them by adding the
  * following line.
@@ -150,7 +157,22 @@ bool q_delete_mid(struct list_head *head)
 bool q_delete_dup(struct list_head *head)
 {
     // https://leetcode.com/problems/remove-duplicates-from-sorted-list-ii/
-    return false;
+    if (!head || list_empty(head))
+        return false;
+
+    struct list_head **tmp = &head->next;
+    struct list_head *jump = (*tmp)->next;
+    while (*tmp != head) {
+        if (cmp(*tmp, jump) == 0) {
+            while (cmp(*tmp, jump) == 0) {
+                jump = jump->next;
+            }
+            *tmp = jump;
+        }
+        tmp = &(*tmp)->next;
+        jump = (*tmp)->next;
+    }
+    return true;
 }
 
 /* Swap every two adjacent nodes */
@@ -218,12 +240,7 @@ typedef int
     __attribute__((nonnull(1, 2))) (*list_cmp_func_t)(const struct list_head *,
                                                       const struct list_head *);
 
-int cmp(const struct list_head *a, const struct list_head *b)
-{
-    element_t *a_ele = container_of(a, element_t, list);
-    element_t *b_ele = container_of(b, element_t, list);
-    return (strcmp(a_ele->value, b_ele->value));
-}
+
 
 static struct list_head *merge(list_cmp_func_t cmp,
                                struct list_head *a,

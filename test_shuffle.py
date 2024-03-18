@@ -3,6 +3,8 @@ import re
 import random
 from itertools import permutations
 import random
+import matplotlib.pyplot as plt
+import numpy as np
 
 # 測試 shuffle 次數
 test_count = 1000000
@@ -58,3 +60,13 @@ for i in c:
 print("Expectation: ", expectation)
 print("Observation: ", counterSet)
 print("chi square sum: ", chiSquaredSum)
+
+permutations = counterSet.keys()
+counts = counterSet.values()
+x = np.arange(len(counts))
+plt.bar(x, counts)
+plt.xticks(x, permutations)
+plt.xlabel('permutations')
+plt.ylabel('counts')
+plt.title('Shuffle result')
+plt.show()

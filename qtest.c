@@ -875,7 +875,7 @@ static bool do_merge(int argc, char *argv[])
     return ok && !error_check();
 }
 
-// static bool do_s:huffle(int argc, char *argv[])
+// static bool do_shuffle(int argc, char *argv[])
 // {
 //     if (!current || !current->q)
 //         report(3, "Warning: Calling shuffle on null queue");

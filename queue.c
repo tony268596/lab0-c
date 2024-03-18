@@ -1,8 +1,8 @@
+#include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "queue.h"
+#include <time.h>
 
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
@@ -468,9 +468,9 @@ void swap(struct list_head *node_1, struct list_head *node_2)
         return;
     struct list_head *tmp1 = node_1->prev;
     struct list_head *tmp2 = node_2->prev;
-    if (node_1->prev != node_2)
-        list_move(node_2, tmp1);
-    list_move(node_1, tmp2);
+    if (node_1 != tmp2)
+        list_move(node_1, tmp2);
+    list_move(node_2, tmp1);
 }
 
 void q_shuffle(struct list_head *head)
@@ -481,16 +481,17 @@ void q_shuffle(struct list_head *head)
     int len = q_size(head);
     struct list_head *back = head->prev;
     struct list_head *cur = head->next;
-    for (; len > 0; len--) {
+    while (len) {
         int random = rand() % len;
-        if (!random)
-            continue;
-        while (--random) {
+        while (random) {
             cur = cur->next;
+            random--;
         }
         swap(cur, back);
 
         back = cur->prev;
         cur = head->next;
+
+        len--;
     }
 }

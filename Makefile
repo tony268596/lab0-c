@@ -74,6 +74,9 @@ valgrind: valgrind_existence
 	@echo "Test with specific case by running command:" 
 	@echo "scripts/driver.py -p $(patched_file) --valgrind -t <tid>"
 
+check-massif: qtest
+	valgrind --tool=massif ./$< -v 3 -f traces/trace-17-complexity.cmd
+
 clean:
 	rm -f $(OBJS) $(deps) *~ qtest /tmp/qtest.*
 	rm -rf .$(DUT_DIR)

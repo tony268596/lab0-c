@@ -10,6 +10,7 @@
 #include <sys/select.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include "time.h"
 
 #include "console.h"
 #include "report.h"

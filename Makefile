@@ -4,8 +4,11 @@ CFLAGS = -O1 -g -Wall -Werror -Idudect -I.
 # Emit a warning should any variable-length array be found within the code.
 CFLAGS += -Wvla
 
+MCTS = mcts
+
 GIT_HOOKS := .git/hooks/applied
 DUT_DIR := dudect
+AG_DIR := agents
 all: $(GIT_HOOKS) qtest
 
 tid := 0
@@ -41,7 +44,7 @@ OBJS := qtest.o report.o console.o harness.o queue.o \
         random.o dudect/constant.o dudect/fixture.o dudect/ttest.o \
         shannon_entropy.o \
         linenoise.o web.o \
-		game.o
+		game.o agents/mcts.o
 
 deps := $(OBJS:%.o=.%.o.d)
 
@@ -51,6 +54,7 @@ qtest: $(OBJS)
 
 %.o: %.c
 	@mkdir -p .$(DUT_DIR)
+	@mkdir -p .$(AG_DIR)
 	$(VECHO) "  CC\t$@\n"
 	$(Q)$(CC) -o $@ $(CFLAGS) -c -MMD -MF .$@.d $<
 
@@ -81,6 +85,7 @@ check-massif: qtest
 clean:
 	rm -f $(OBJS) $(deps) *~ qtest /tmp/qtest.*
 	rm -rf .$(DUT_DIR)
+	rm -rf .$(AG_DIR)
 	rm -rf *.dSYM
 	(cd traces; rm -f *~)
 

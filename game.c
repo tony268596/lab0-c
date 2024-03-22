@@ -62,13 +62,13 @@ char check_win(char *t)
     return 'D';
 }
 
-double calculate_win_value(char win, char player)
+int calculate_win_value(char win, char player)
 {
     if (win == player)
-        return 1.0;
+        return 10;
     if (win == (player ^ 'O' ^ 'X'))
-        return 0.0;
-    return 0.5;
+        return 0;
+    return 5;
 }
 
 int *available_moves(const char *table)

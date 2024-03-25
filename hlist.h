@@ -1,3 +1,5 @@
+#include <stdbool.h>
+#include <stddef.h>
 #include "list.h"
 
 struct hlist_node {
@@ -18,6 +20,11 @@ static inline void INIT_HLIST_NODE(struct hlist_node *h)
     h->pprev = NULL;
 }
 
+static inline int hlist_empty(const struct hlist_head *h)
+{
+    return !h->first;
+}
+
 static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
 {
     if (h->first)
@@ -25,6 +32,11 @@ static inline void hlist_add_head(struct hlist_node *n, struct hlist_head *h)
     n->next = h->first;
     n->pprev = &h->first;
     h->first = n;
+}
+
+static inline bool hlist_unhashed(const struct hlist_node *h)
+{
+    return !h->pprev;
 }
 
 static inline void hlist_del(struct hlist_node *n)
@@ -35,15 +47,33 @@ static inline void hlist_del(struct hlist_node *n)
         next->pprev = pprev;
 }
 
+static inline void hlist_del_init(struct hlist_node *n)
+{
+    if (hlist_unhashed(n))
+        return;
+    hlist_del(n);
+    INIT_HLIST_NODE(n);
+}
+
 #define hlist_entry(ptr, type, member) container_of(ptr, type, member)
 
-#define hlist_for_each(pos, head) \
-    for (pos = (head)->first; pos; pos = pos->next)
+#ifdef __HAVE_TYPEOF
+#define hlist_entry_safe(ptr, type, member)                  \
+    ({                                                       \
+        typeof(ptr) ____ptr = (ptr);                         \
+        ____ptr ? hlist_entry(____ptr, type, member) : NULL; \
+    })
+#else
+#define hlist_entry_safe(ptr, type, member) \
+    (ptr) ? hlist_entry(ptr, type, member) : NULL
+#endif
 
-#define hlist_for_each_safe(pos, n, head)        \
-    for (pos = (head)->first; pos && ({          \
-                                  n = pos->next; \
-                                  true           \
-                              });                \
-         pos = n)
-
+#ifdef __HAVE_TYPEOF
+#define hlist_for_each_entry(pos, head, member)                              \
+    for (pos = hlist_entry_safe((head)->first, typeof(*(pos)), member); pos; \
+         pos = hlist_entry_safe((pos)->member.next, typeof(*(pos)), member))
+#else
+#define hlist_for_each_entry(pos, head, member, type)              \
+    for (pos = hlist_entry_safe((head)->first, type, member); pos; \
+         pos = hlist_entry_safe((pos)->member.next, type, member))
+#endif

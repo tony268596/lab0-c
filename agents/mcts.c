@@ -7,6 +7,7 @@
 
 #include "game.h"
 #include "mcts.h"
+#include "time.h"
 #include "util.h"
 
 #define SCALE_FACTOR 1000
@@ -70,6 +71,7 @@ static struct node *select_move(struct node *node)
 
 static int simulate(char *table, char player)
 {
+    srand(time(0));
     char current_player = player;
     char temp_table[N_GRIDS];
     memcpy(temp_table, table, N_GRIDS);

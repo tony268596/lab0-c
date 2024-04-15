@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "game.h"
+#include "../game.h"
 #include "mcts.h"
 #include "time.h"
 #include "util.h"

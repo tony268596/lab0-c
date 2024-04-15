@@ -57,7 +57,7 @@ qtest: $(OBJS)
 	@mkdir -p .$(DUT_DIR)
 	@mkdir -p .$(AG_DIR)
 	$(VECHO) "  CC\t$@\n"
-	$(Q)$(CC) -o $@ $(CFLAGS) -c -MMD -MF .$@.d $<
+	$(Q)$(CC) -o $@  -c -MMD -MF .$@.d $<
 
 check: qtest
 	./$< -v 3 -f traces/trace-eg.cmd

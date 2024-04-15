@@ -2,10 +2,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "../queue.h"
+#include "../random.h"
 #include "constant.h"
 #include "cpucycles.h"
-#include "queue.h"
-#include "random.h"
 
 /* Maintain a queue independent from the qtest since
  * we do not want the test to affect the original functionality

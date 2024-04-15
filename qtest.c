@@ -1033,12 +1033,7 @@ static bool do_next(int argc, char *argv[])
 
 static bool do_ttt(int argc, char *argv[])
 {
-    srand(time(NULL));
-    char table[N_GRIDS];
-    memset(table, ' ', N_GRIDS);
-    char turn = 'X';
-
-    int mode = 0;  // 0 -> hc，1 -> MCTS vs Negamax
+    int mode = 0;  // 0 -> human vs. computer，1 -> MCTS vs Negamax
     if (argc > 1) {
         if (strcmp(argv[1], "hc") == 0) {
             mode = 0;
@@ -1048,52 +1043,63 @@ static bool do_ttt(int argc, char *argv[])
     }
 
     negamax_init();
-
     while (1) {
-        char win = check_win(table);
-        if (win == 'D') {
-            draw_board(table);
-            printf("It is a draw!\n");
-            break;
-        } else if (win != ' ') {
-            draw_board(table);
-            printf("%c won!\n", win);
-            break;
-        }
+        // initial table
+        srand(time(NULL));
+        char table[N_GRIDS];
+        memset(table, ' ', N_GRIDS);
+        char turn = 'X';
 
-        if (turn == 'X') {
-            if (!mode) {
+        while (1) {
+            char win = check_win(table);
+            if (win == 'D') {
                 draw_board(table);
-                int move;
-                while (1) {
-                    move = get_input(turn);
-                    if (table[move] == ' ') {
-                        break;
+                printf("It is a draw!\n");
+                break;
+            } else if (win != ' ') {
+                draw_board(table);
+                printf("%c won!\n", win);
+                break;
+            }
+
+            if (turn == 'X') {
+                if (!mode) {
+                    draw_board(table);
+                    print_current_time();
+                    int move;
+                    while (1) {
+                        move = get_input(turn);
+                        if (table[move] == ' ') {
+                            break;
+                        }
+                        printf(
+                            "Invalid operation: the position has been "
+                            "marked\n");
                     }
-                    printf("Invalid operation: the position has been marked\n");
+                    table[move] = turn;
+                    record_move(move);
+                } else {
+                    int move = negamax_predict(table, turn).move;
+                    if (move != -1) {
+                        table[move] = turn;
+                        record_move(move);
+                    }
                 }
-                table[move] = turn;
-                record_move(move);
             } else {
-                int move = negamax_predict(table, turn).move;
+                draw_board(table);
+                print_current_time();
+                int move = mcts(table, turn);
                 if (move != -1) {
                     table[move] = turn;
                     record_move(move);
                 }
             }
-        } else {
-            draw_board(table);
-            int move = mcts(table, turn);
-            if (move != -1) {
-                table[move] = turn;
-                record_move(move);
-            }
+            turn = turn == 'X' ? 'O' : 'X';
         }
-        turn = turn == 'X' ? 'O' : 'X';
-    }
-    print_moves();
-    move_count = 0;
 
+        print_moves();
+        move_count = 0;
+    }
     return !error_check();
 }
 

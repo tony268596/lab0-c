@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "agents/mcts.h"
 #include "agents/negamax.h"
 #include "game.h"
@@ -15,5 +16,6 @@ extern int move_count;
 void record_move(int move);
 void print_moves();
 int get_input(char player);
+void print_current_time();
 
 #endif

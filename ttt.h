@@ -11,6 +11,7 @@
 #include "agents/negamax.h"
 #include "game.h"
 #include "list.h"
+#include "me.h"
 #include "string.h"
 
 extern int move_record[N_GRIDS];

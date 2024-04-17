@@ -51,6 +51,8 @@ void task0(void *arg)
     }
     while (1) {
         task = cur_task;
+        read_key();
+        process_key();
         if (setjmp(task->env) == 0) {
             char win = check_win(task->table);
             if (win == 'D') {
@@ -101,6 +103,8 @@ void task1(void *arg)
     }
     while (1) {
         task = cur_task;
+        read_key();
+        process_key();
         if (setjmp(task->env) == 0) {
             char win = check_win(task->table);
             if (win == 'D') {

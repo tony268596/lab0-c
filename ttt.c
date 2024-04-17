@@ -239,7 +239,7 @@ void main_ttt(int mode)
                 ntasks = ARRAY_SIZE(registered_task);
 
                 schedule();
-                printf("\t\t\tout\t\t\n");
+
                 for (int i = 0; i < N_GRIDS; i++) {
                     table[i] = ' ';
                 }

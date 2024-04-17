@@ -1045,6 +1045,7 @@ static bool do_ttt(int argc, char *argv[])
     return !error_check();
 }
 
+
 static void console_init()
 {
     ADD_COMMAND(new, "Create new queue", "");

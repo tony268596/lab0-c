@@ -37,7 +37,6 @@ void schedule(void)
 
 void task0(void *arg)
 {
-    printf("\t\t\t111\t\t\t");
     struct task *task = malloc(sizeof(struct task));
     strncpy(task->task_name, ((struct arg *) arg)->task_name, 6);
     task->table = ((struct arg *) arg)->table;
@@ -57,7 +56,9 @@ void task0(void *arg)
             if (win == 'D') {
                 draw_board(task->table);
                 printf("It is a draw!\n");
-                break;
+            } else if (win != ' ') {
+                draw_board(task->table);
+                printf("%c won!\n", win);
             }
 
             printf("%s: n = %c\n", task->task_name, task->turn);
@@ -67,6 +68,12 @@ void task0(void *arg)
             if (move != -1) {
                 task->table[move] = task->turn;
                 record_move(move);
+            }
+
+            if (win != ' ') {
+                for (int i = 0; i < N_GRIDS; i++) {
+                    task->table[i] = ' ';
+                }
             }
 
             task_add(task);
@@ -99,7 +106,9 @@ void task1(void *arg)
             if (win == 'D') {
                 draw_board(task->table);
                 printf("It is a draw!\n");
-                break;
+            } else if (win != ' ') {
+                draw_board(task->table);
+                printf("%c won!\n", win);
             }
 
             printf("%s: n = %c\n", task->task_name, task->turn);
@@ -109,6 +118,12 @@ void task1(void *arg)
             if (move != -1) {
                 task->table[move] = task->turn;
                 record_move(move);
+            }
+
+            if (win != ' ') {
+                for (int i = 0; i < N_GRIDS; i++) {
+                    task->table[i] = ' ';
+                }
             }
 
             task_add(task);
